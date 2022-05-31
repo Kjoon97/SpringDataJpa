@@ -1,31 +1,42 @@
 package study.datajpa.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)  //protected 타입 기본 생성자.
+@ToString(of = {"id", "username", "age"})  //연관관계인 team은 안 넣어야함. -> 무한 루프.. team참조하면 team에서 member도 참조되고 member에서 team 참조... 반복..
 public class Member {
 
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
+    @Column(name = "member_id")
     private Long id;
     private String username;
+    private int age;
 
-    protected Member(){  //JPA는 프록시 기술을 쓸 때 기본 생성자가 있어야한다(private으로 하면 안됨). 아무데서나 호출되지 않게 protected로 선언.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="team_id")   //외래키 명
+    private Team team;
 
-    }
     public Member(String username) {
         this.username = username;
     }
 
-    //setter 대신 따로 매서드 만들어서 사용.
-    public void changeUsername(String username){
+    public Member(String username, int age, Team team) {
         this.username = username;
+        this.age = age;
+        if (team!=null){
+            changeTeam(team);
+        }
     }
+
+    //연관관계 세팅. - 팀을 바꾸는 동시에 반대쪽 team에서도 member가 추가되게끔.
+    public void changeTeam(Team team){
+        this.team = team;
+        team.getMembers().add(this);
+    }
+
 }

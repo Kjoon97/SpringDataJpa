@@ -33,6 +33,11 @@ public class Member {
         }
     }
 
+    public Member(String username, int age) {
+        this.username = username;
+        this.age = age;
+    }
+
     //연관관계 세팅. - 팀을 바꾸는 동시에 반대쪽 team에서도 member가 추가되게끔.
     public void changeTeam(Team team){
         this.team = team;

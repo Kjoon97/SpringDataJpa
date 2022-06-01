@@ -9,6 +9,9 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  //protected 타입 기본 생성자.
 @ToString(of = {"id", "username", "age"})  //연관관계인 team은 안 넣어야함. -> 무한 루프.. team참조하면 team에서 member도 참조되고 member에서 team 참조... 반복..
+@NamedQuery(
+        name="Member.findByUsername",
+        query="select m from Member m where m.username = :username")
 public class Member {
 
     @Id @GeneratedValue
